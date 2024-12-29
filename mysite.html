@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ваш предмет удачи</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E6E6FA; /* Лавандовый фон */
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Центровка содержимого */
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #555;
+            font-size: 24px; /* Увеличенный шрифт заголовка */
+        }
+        p.description {
+            font-size: 12px; /* Уменьшенный шрифт описания */
+            color: #483D8B; /* Темно-лиловый цвет текста */
+            line-height: 1.5;
+            margin-top: 50px; /* Больше отступ сверху */
+            text-align: center;
+            max-width: 600px;
+        }
+        input[type="date"] {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: calc(100% - 22px);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px; /* Увеличенный шрифт кнопки */
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .current-date {
+            font-size: 16px; /* Увеличенный шрифт даты */
+            margin-top: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Узнай свой предмет удачи</h1>
+        <p>Введите вашу дату рождения:</p>
+        <input type="date" id="birthDate">
+        <button onclick="getLuckItem()">Узнать</button>
+        <p class="current-date">Сегодня: <span id="currentDate"></span></p>
+        <div class="result" id="result"></div>
+    </div>
+
+    <p class="description">Этот сайт создан под вдохновением японской литературы, которая часто раскрывает темы случайности и судьбы. Знаете ли вы, что японская культура глубоко почитает амулеты и символы удачи, такие как омикудзи — предсказания, получаемые в храмах? Этот сайт предлагает вам уникальный предмет удачи, который добавит чуть больше уверенности в ваш день. Помните, удача — это не гарантия успеха, но правильный настрой помогает достигать целей.</p>
+
+    <script>
+        // Список предметов удачи
+        const luckItems = [
+            "Пульт от телевизора",
+            "Красный плед",
+            "Плюшевая игрушка кота",
+            "Фиолетовый галстук",
+            "Круглый камень",
+            "Колокольчик",
+            "Ветвь ели",
+            "Деревянная ложка",
+            "Чёрный зонтик",
+            "Белый платок",
+            "Статуэтка кота",
+            "Золотой браслет",
+            "Серебряное кольцо",
+            "Зеркальце",
+            "Кроличья лапка",
+            "Жёлтые носки",
+            "Кожаный ремень",
+            "Фонарик",
+            "Солнечные очки",
+            "Бандана",
+            "Замок",
+            "Брелок в виде Земли",
+            "Оранжевый карандаш",
+            "Напёрсток",
+            "Красная нить",
+            "Губная помада",
+            "Магнит",
+            "Зелёная шариковая ручка"
+        ];
+
+        function getZodiacSign(day, month) {
+            if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return "Овен";
+            if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return "Телец";
+            if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return "Близнецы";
+            if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return "Рак";
+            if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return "Лев";
+            if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return "Дева";
+            if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return "Весы";
+            if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return "Скорпион";
+            if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return "Стрелец";
+            if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return "Козерог";
+            if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return "Водолей";
+            if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return "Рыбы";
+        }
+
+        function getLuckItem() {
+            const birthDateInput = document.getElementById("birthDate").value;
+            const resultDiv = document.getElementById("result");
+
+            if (!birthDateInput) {
+                resultDiv.textContent = "Пожалуйста, введите вашу дату рождения!";
+                return;
+            }
+
+            const birthDate = new Date(birthDateInput);
+            const day = birthDate.getDate();
+            const month = birthDate.getMonth() + 1;
+            const zodiacSign = getZodiacSign(day, month);
+
+            const today = new Date().toISOString().slice(0, 10); // Сегодняшняя дата
+            const uniqueKey = `${zodiacSign}-${today}`; // Уникальный ключ для каждого дня
+            const hash = uniqueKey.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0); // Хэширование ключа
+            const itemIndex = hash % luckItems.length; // Индекс предмета
+            const chosenItem = luckItems[itemIndex]; // Выбираем предмет по индексу
+
+            resultDiv.innerHTML = `
+                Ваш знак зодиака: ${zodiacSign}.<br>
+                Предмет удачи: ${chosenItem}.
+            `;
+        }
+
+        document.getElementById("currentDate").textContent = new Date().toLocaleDateString("ru-RU", {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+    </script>
+</body>
+</html>
